@@ -18,16 +18,16 @@ class PasswordServiceTest {
     @ParameterizedTest
     @ValueSource(strings = ["AbTp9!foo", "Jhdg*hsh1"])
     fun `should run successfully with a valid password`(password: String) {
-        val (isValid, message) = passwordService.validatePassword("test")
+        val (isValid, message) = passwordService.validatePassword(password)
 
         assertThat(isValid).isTrue()
-        assertThat(message).isEqualTo("Password test is valid!")
+        assertThat(message).isEqualTo("Password $password is valid!")
     }
 
     @ParameterizedTest
     @ValueSource(strings = ["AbTp9!fo"])
-    fun `password must be invalid if length is smaller than 9`() {
-        val (isValid, message) = passwordService.validatePassword("test")
+    fun `password must be invalid if length is smaller than 9`(password: String) {
+        val (isValid, message) = passwordService.validatePassword(password)
 
         assertThat(isValid).isFalse()
         assertThat(message).isEqualTo("Password has less than 9 characters")
