@@ -13,5 +13,5 @@ class PasswordController(
 
     @Get
     @Produces(MediaType.TEXT_PLAIN)
-    fun validatePassword(): String = passwordService.validatePassword("test")
+    fun validatePassword(): String = passwordService.validatePassword("test").second
 }
