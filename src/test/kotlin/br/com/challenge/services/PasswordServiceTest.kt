@@ -3,6 +3,9 @@ package br.com.challenge.services
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
+import assertk.assertions.isGreaterThan
+import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.params.ParameterizedTest
@@ -18,18 +21,23 @@ class PasswordServiceTest {
     @ParameterizedTest
     @ValueSource(strings = ["AbTp9!foo", "Jhdg*hsh1"])
     fun `should run successfully with a valid password`(password: String) {
-        val (isValid, message) = passwordService.validatePassword(password)
+        val (isValid, validationErrors) = passwordService.validatePassword(password)
 
         assertThat(isValid).isTrue()
-        assertThat(message).isEqualTo("Password $password is valid!")
+        assertThat(validationErrors.isEmpty()).isTrue()
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["AbTp9!fo"])
+    @ValueSource(strings = ["AbTp9!fo", "kt1!"])
     fun `password must be invalid if length is smaller than 9`(password: String) {
-        val (isValid, message) = passwordService.validatePassword(password)
+        val (isValid, validationErrors) = passwordService.validatePassword(password)
 
         assertThat(isValid).isFalse()
-        assertThat(message).isEqualTo("Password has less than 9 characters")
+        assertThat(validationErrors.isEmpty()).isFalse()
+        assertThat(validationErrors.contains(PASSWORD_LENGTH_ERROR_MESSAGE)).isTrue()
+    }
+
+    companion object {
+        private const val PASSWORD_LENGTH_ERROR_MESSAGE = "Password has less than 9 characters"
     }
 }

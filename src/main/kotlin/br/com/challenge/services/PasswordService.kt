@@ -7,12 +7,20 @@ import javax.inject.Singleton
 class PasswordService {
 
     fun validatePassword(password: String): PasswordStatus {
-        return validateLength(password)
+        val validationErrorMessages = mutableListOf<String>()
+        val (isLengthValid, lengthValidationMessage) = validateLength(password)
+
+        if(lengthValidationMessage != null) validationErrorMessages.add(lengthValidationMessage)
+
+        return PasswordStatus(
+                isLengthValid,
+                validationErrorMessages.toList()
+        )
     }
 
-    fun validateLength(password: String) =
+    private fun validateLength(password: String): Pair<Boolean, String?> =
             if(password.length >= PASSWORD_MINIMUM_SIZE) {
-                true to "Password $password is valid!"
+                true to null
             } else {
                 false to "Password has less than 9 characters"
             }
