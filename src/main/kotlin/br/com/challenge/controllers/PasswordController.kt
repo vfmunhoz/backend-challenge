@@ -1,8 +1,8 @@
 package br.com.challenge.controllers
 
-import br.com.challenge.controllers.entities.PasswordValidationErrorResponse
-import br.com.challenge.controllers.entities.PasswordValidationRequest
-import br.com.challenge.controllers.entities.PasswordValidationResponse
+import br.com.challenge.entities.PasswordValidationErrorResponse
+import br.com.challenge.entities.PasswordValidationRequest
+import br.com.challenge.entities.PasswordValidationResponse
 import br.com.challenge.extensions.toPasswordResponse
 import br.com.challenge.services.PasswordService
 import io.micronaut.http.HttpRequest
