@@ -3,12 +3,10 @@ package br.com.challenge.extensions
 import assertk.assertThat
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-@MicronautTest
 class StringExtensionsTest {
 
     @ParameterizedTest

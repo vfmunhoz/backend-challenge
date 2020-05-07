@@ -3,16 +3,12 @@ package br.com.challenge.services
 import assertk.assertThat
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import javax.inject.Inject
 
-@MicronautTest
 class PasswordServiceTest {
 
-    @Inject
-    lateinit var passwordService: PasswordService
+    private val passwordService: PasswordService = PasswordService()
 
     @ParameterizedTest
     @ValueSource(strings = ["AbTp9!foo", "Jhdg*hsh1", "!Jhdgahsh1", "Jhdgahsh1!"])
