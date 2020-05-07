@@ -8,16 +8,19 @@ class PasswordService {
 
     fun validatePassword(password: String): PasswordStatus {
         val validationErrorMessages = mutableListOf<String>()
+
         val (isLengthValid, lengthValidationMessage) = validateLength(password)
         val (isCaseValid, caseValidationMessage) = validatePasswordCase(password)
         val (hasDigits, digitsValidationMessage) = validatePasswordHasDigits(password)
+        val (hasSpecialChars, specialCharValidationMessage) = validatePasswordHasSpecialChars(password)
 
         if(lengthValidationMessage != null) validationErrorMessages.add(lengthValidationMessage)
         if(caseValidationMessage != null) validationErrorMessages.add(caseValidationMessage)
         if(digitsValidationMessage != null) validationErrorMessages.add(digitsValidationMessage)
+        if(specialCharValidationMessage != null) validationErrorMessages.add(specialCharValidationMessage)
 
         return PasswordStatus(
-                isLengthValid && isCaseValid && hasDigits,
+                isLengthValid && isCaseValid && hasDigits && hasSpecialChars,
                 validationErrorMessages.toList()
         )
     }
@@ -45,9 +48,18 @@ class PasswordService {
         }
     }
 
+    private fun validatePasswordHasSpecialChars(password: String): Pair<Boolean, String?> {
+        return if(PASSWORD_HAS_SPECIAL_CHARS_REGEX.toRegex().matches(password)) {
+            true to null
+        } else {
+            false to "Password must have at least one special char"
+        }
+    }
+
     companion object {
         private const val PASSWORD_MINIMUM_SIZE = 9
         private const val PASSWORD_PATTERN_REGEX = "((?=.*[A-Z])(?=.*[a-z])).*"
         private const val PASSWORD_HAS_DIGITS_REGEX = "(?=.*\\d).*"
+        private const val PASSWORD_HAS_SPECIAL_CHARS_REGEX = "(?=.*[\\W]).*"
     }
 }

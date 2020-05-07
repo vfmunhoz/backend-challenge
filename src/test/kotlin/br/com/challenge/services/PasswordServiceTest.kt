@@ -15,7 +15,7 @@ class PasswordServiceTest {
     lateinit var passwordService: PasswordService
 
     @ParameterizedTest
-    @ValueSource(strings = ["AbTp9!foo", "Jhdg*hsh1"])
+    @ValueSource(strings = ["AbTp9!foo", "Jhdg*hsh1", "!Jhdgahsh1", "Jhdgahsh1!"])
     fun `should run successfully with a valid password`(password: String) {
         val (isValid, validationErrors) = passwordService.validatePassword(password)
 
@@ -53,9 +53,20 @@ class PasswordServiceTest {
         assertThat(validationErrors.contains(PASSWORD_NO_DIGIT_ERROR_MESSAGE)).isTrue()
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = ["AbTp91foo", "Jhdg8hsh1"])
+    fun `password must be invalid if it doesn't have any special character`(password: String) {
+        val (isValid, validationErrors) = passwordService.validatePassword(password)
+
+        assertThat(isValid).isFalse()
+        assertThat(validationErrors.isEmpty()).isFalse()
+        assertThat(validationErrors.contains(PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE)).isTrue()
+    }
+
     companion object {
         private const val PASSWORD_LENGTH_ERROR_MESSAGE = "Password has less than 9 characters"
         private const val PASSWORD_LETTER_CASE_ERROR_MESSAGE = "Password must have at least one lower and one upper case letters"
         private const val PASSWORD_NO_DIGIT_ERROR_MESSAGE = "Password must have at least one digit"
+        private const val PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE = "Password must have at least one special char"
     }
 }
