@@ -1,66 +1,42 @@
 package br.com.challenge.services
 
 import br.com.challenge.entities.PasswordStatus
+import br.com.challenge.extensions.hasDigits
+import br.com.challenge.extensions.hasLowerAndUpperCaseLetters
+import br.com.challenge.extensions.hasSpecialChars
 import javax.inject.Singleton
 
 @Singleton
 class PasswordService {
 
-    fun validatePassword(pass: String): PasswordStatus {
-        val password = pass.trim().replace(" ", "")
+    fun validatePassword(password: String): PasswordStatus {
         val validationErrorMessages = mutableListOf<String>()
 
-        val (isLengthValid, lengthValidationMessage) = validateLength(password)
-        val (isCaseValid, caseValidationMessage) = validatePasswordCase(password)
-        val (hasDigits, digitsValidationMessage) = validatePasswordHasDigits(password)
-        val (hasSpecialChars, specialCharValidationMessage) = validatePasswordHasSpecialChars(password)
+        val trimPassword = password.trim().replace(" ", "")
 
-        if(lengthValidationMessage != null) validationErrorMessages.add(lengthValidationMessage)
-        if(caseValidationMessage != null) validationErrorMessages.add(caseValidationMessage)
-        if(digitsValidationMessage != null) validationErrorMessages.add(digitsValidationMessage)
-        if(specialCharValidationMessage != null) validationErrorMessages.add(specialCharValidationMessage)
+        val isLengthValid = validateLength(trimPassword).also { verifyValidation(it, validationErrorMessages, PASSWORD_LENGTH_ERROR_MESSAGE) }
+        val isCaseValid = trimPassword.hasLowerAndUpperCaseLetters().also { verifyValidation(it, validationErrorMessages, PASSWORD_LETTER_CASE_ERROR_MESSAGE) }
+        val hasDigits = trimPassword.hasDigits().also { verifyValidation(it, validationErrorMessages, PASSWORD_NO_DIGIT_ERROR_MESSAGE) }
+        val hasSpecialChars = trimPassword.hasSpecialChars().also { verifyValidation(it, validationErrorMessages, PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE) }
 
         return PasswordStatus(
-                isLengthValid && isCaseValid && hasDigits && hasSpecialChars,
-                validationErrorMessages.toList()
+            isLengthValid && isCaseValid && hasDigits && hasSpecialChars,
+            validationErrorMessages.toList()
         )
     }
 
-    private fun validateLength(password: String): Pair<Boolean, String?> =
-            if(password.length >= PASSWORD_MINIMUM_SIZE) {
-                true to null
-            } else {
-                false to "Password has less than 9 characters"
-            }
+    private fun validateLength(password: String): Boolean = password.length >= PASSWORD_MINIMUM_SIZE
 
-    private fun validatePasswordCase(password: String): Pair<Boolean, String?> {
-        return if(PASSWORD_PATTERN_REGEX.toRegex().matches(password)) {
-            true to null
-        } else {
-            false to "Password must have at least one lower and one upper case letters"
-        }
-    }
-
-    private fun validatePasswordHasDigits(password: String): Pair<Boolean, String?> {
-        return if(PASSWORD_HAS_DIGITS_REGEX.toRegex().matches(password)) {
-            true to null
-        } else {
-            false to "Password must have at least one digit"
-        }
-    }
-
-    private fun validatePasswordHasSpecialChars(password: String): Pair<Boolean, String?> {
-        return if(PASSWORD_HAS_SPECIAL_CHARS_REGEX.toRegex().matches(password)) {
-            true to null
-        } else {
-            false to "Password must have at least one special char"
-        }
+    private fun verifyValidation(isValid: Boolean, errors: MutableCollection<String>, message: String) {
+        if(!isValid) errors.add(message)
     }
 
     companion object {
         private const val PASSWORD_MINIMUM_SIZE = 9
-        private const val PASSWORD_PATTERN_REGEX = "((?=.*[A-Z])(?=.*[a-z])).*"
-        private const val PASSWORD_HAS_DIGITS_REGEX = "(?=.*\\d).*"
-        private const val PASSWORD_HAS_SPECIAL_CHARS_REGEX = "(?=.*[\\W]).*"
+
+        private const val PASSWORD_LENGTH_ERROR_MESSAGE = "Password must have at least 9 characters"
+        private const val PASSWORD_LETTER_CASE_ERROR_MESSAGE = "Password must have at least one lower and one upper case letters"
+        private const val PASSWORD_NO_DIGIT_ERROR_MESSAGE = "Password must have at least one digit"
+        private const val PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE = "Password must have at least one special char"
     }
 }

@@ -64,7 +64,7 @@ class PasswordServiceTest {
     }
 
     companion object {
-        private const val PASSWORD_LENGTH_ERROR_MESSAGE = "Password has less than 9 characters"
+        private const val PASSWORD_LENGTH_ERROR_MESSAGE = "Password must have at least 9 characters"
         private const val PASSWORD_LETTER_CASE_ERROR_MESSAGE = "Password must have at least one lower and one upper case letters"
         private const val PASSWORD_NO_DIGIT_ERROR_MESSAGE = "Password must have at least one digit"
         private const val PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE = "Password must have at least one special char"
