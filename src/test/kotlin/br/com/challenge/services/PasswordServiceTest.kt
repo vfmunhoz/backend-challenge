@@ -24,7 +24,7 @@ class PasswordServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["AbTp9!fo", "kt1!"])
+    @ValueSource(strings = ["AbTp9!fo", "Kt1!"])
     fun `password must be invalid if length is smaller than 9`(password: String) {
         val (isValid, validationErrors) = passwordService.validatePassword(password)
 
