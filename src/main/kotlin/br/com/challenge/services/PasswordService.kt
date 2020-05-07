@@ -6,7 +6,8 @@ import javax.inject.Singleton
 @Singleton
 class PasswordService {
 
-    fun validatePassword(password: String): PasswordStatus {
+    fun validatePassword(pass: String): PasswordStatus {
+        val password = pass.trim().replace(" ", "")
         val validationErrorMessages = mutableListOf<String>()
 
         val (isLengthValid, lengthValidationMessage) = validateLength(password)
