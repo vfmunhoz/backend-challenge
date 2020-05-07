@@ -22,6 +22,26 @@ configurations {
     developmentOnly 
 }
 
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/kotlin')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+    integrationTestAnnotationProcessor.extendsFrom testAnnotationProcessor
+    kaptIntegrationTest.extendsFrom kaptTest
+}
+
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java:${micronautAnnotationProcessor}"
     compile "io.micronaut:micronaut-inject:${micronautAnnotationProcessor}"
@@ -46,12 +66,13 @@ dependencies {
     kaptTest "io.micronaut:micronaut-inject-java"
 
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testImplementation "io.micronaut.test:micronaut-test-kotlintest"
     testImplementation "io.mockk:mockk:1.9.3"
-    testImplementation "io.kotlintest:kotlintest-runner-junit5:3.3.2"
     testImplementation "org.junit.jupiter:junit-jupiter:5.6.2"
     testCompile 'com.willowtreeapps.assertk:assertk-jvm:0.22'
     testCompile "io.micronaut.test:micronaut-test-junit5:1.1.0.RC1"
+
+    kaptIntegrationTest platform("io.micronaut:micronaut-bom:$micronautVersion")
+
 }
 
 test.classpath += configurations.developmentOnly
@@ -60,6 +81,12 @@ mainClassName = "br.com.challenge.Application"
 
 test {
     useJUnitPlatform()
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
 allOpen {
@@ -81,9 +108,19 @@ compileTestKotlin {
 	}
 }
 
+compileIntegrationTestKotlin {
+    kotlinOptions {
+        jvmTarget = '1.8'
+        javaParameters = true
+    }
+}
+
 shadowJar {
     mergeServiceFiles()
 }
 
 run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+
+check.dependsOn integrationTest
+integrationTest.mustRunAfter test
