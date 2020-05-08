@@ -1,6 +1,8 @@
 package br.com.challenge.services
 
 import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.isEmpty
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import org.junit.jupiter.params.ParameterizedTest
@@ -16,7 +18,7 @@ class PasswordServiceTest {
         val (isValid, validationErrors) = passwordService.validatePassword(password)
 
         assertThat(isValid).isTrue()
-        assertThat(validationErrors.isEmpty()).isTrue()
+        assertThat(validationErrors).isEmpty()
     }
 
     @ParameterizedTest
@@ -26,7 +28,7 @@ class PasswordServiceTest {
 
         assertThat(isValid).isFalse()
         assertThat(validationErrors.isEmpty()).isFalse()
-        assertThat(validationErrors.contains(PASSWORD_LENGTH_ERROR_MESSAGE)).isTrue()
+        assertThat(validationErrors).contains(PASSWORD_LENGTH_ERROR_MESSAGE)
     }
 
     @ParameterizedTest
@@ -36,7 +38,7 @@ class PasswordServiceTest {
 
         assertThat(isValid).isFalse()
         assertThat(validationErrors.isEmpty()).isFalse()
-        assertThat(validationErrors.contains(PASSWORD_LETTER_CASE_ERROR_MESSAGE)).isTrue()
+        assertThat(validationErrors).contains(PASSWORD_LETTER_CASE_ERROR_MESSAGE)
     }
 
     @ParameterizedTest
@@ -46,7 +48,7 @@ class PasswordServiceTest {
 
         assertThat(isValid).isFalse()
         assertThat(validationErrors.isEmpty()).isFalse()
-        assertThat(validationErrors.contains(PASSWORD_NO_DIGIT_ERROR_MESSAGE)).isTrue()
+        assertThat(validationErrors).contains(PASSWORD_NO_DIGIT_ERROR_MESSAGE)
     }
 
     @ParameterizedTest
@@ -56,7 +58,7 @@ class PasswordServiceTest {
 
         assertThat(isValid).isFalse()
         assertThat(validationErrors.isEmpty()).isFalse()
-        assertThat(validationErrors.contains(PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE)).isTrue()
+        assertThat(validationErrors).contains(PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE)
     }
 
     companion object {

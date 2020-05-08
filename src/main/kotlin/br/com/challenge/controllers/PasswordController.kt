@@ -36,7 +36,7 @@ class PasswordController(
 
     @Error
     fun parserException(parse: UnsatisfiedRouteException): HttpResponse<PasswordValidationErrorResponse> =
-        HttpResponse.serverError(PasswordValidationErrorResponse("was impossible to serialize the payload [${parse.message}]")).also {
+        HttpResponse.badRequest(PasswordValidationErrorResponse("was impossible to serialize the payload [${parse.message}]")).also {
             logger.error("error parsing password validation payload", parse)
         }
 }

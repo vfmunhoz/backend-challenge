@@ -2,7 +2,7 @@
 
 Para a solução do [desafio](challenge.md) optei por construir o serviço utilizando o [Micronaut](https://micronaut.io/).
 
-Na aplicação tentei presar pela simplicidade no código. A validação das regras, poderia, inclusive, ter sido feita utilizando apenas uma expressão regular, mas para tornar melhor a legibilidade e manutenção, preferi manter expressões diferentes, dessa forma é possível apontar cada validação que não tenha passado.
+Na aplicação tentei prezar pela simplicidade no código. A validação das regras, poderia, inclusive, ter sido feita utilizando apenas uma expressão regular, mas para tornar melhor a legibilidade e manutenção, preferi manter expressões diferentes, dessa forma é possível apontar cada validação que não tenha passado.
 
 Alguns pontos que eu acho interessante mencionar são:
 

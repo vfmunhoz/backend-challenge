@@ -95,7 +95,7 @@ class PasswordValidationTest {
         runCatching { application.client().toBlocking().exchange(request, Argument.of(String::class.java)) }.onFailure { exception ->
             exception as HttpClientResponseException
 
-            assertThat(exception.status).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+            assertThat(exception.status).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.response.body()).isNotNull().given { responseContent ->
                 jacksonObjectMapper().readValue(responseContent.toString(), PasswordValidationErrorResponse::class.java).let { errorResponse ->
                     assertThat(errorResponse.message).isEqualTo(PASSWORD_VALIDATION_SERVICE_PAYLOAD_ERROR)
