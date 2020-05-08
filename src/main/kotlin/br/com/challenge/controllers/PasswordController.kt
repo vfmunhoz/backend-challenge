@@ -17,16 +17,14 @@ import io.micronaut.web.router.exceptions.UnsatisfiedRouteException
 
 @Controller("/")
 class PasswordController(
-        private val passwordService: PasswordService
+    private val passwordService: PasswordService
 ) {
 
     @Post
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     fun validatePassword(passwordValidationRequest: PasswordValidationRequest): HttpResponse<PasswordValidationResponse> =
-        runCatching { passwordService.validatePassword(passwordValidationRequest.password).toPasswordResponse() }
-        .getOrThrow()
-        .let { passwordValidationResponse ->
+        passwordService.validatePassword(passwordValidationRequest.password).toPasswordResponse().let { passwordValidationResponse ->
             if(passwordValidationResponse.isValid) HttpResponse.ok(passwordValidationResponse)
             else HttpResponse.badRequest(passwordValidationResponse)
         }
@@ -34,8 +32,4 @@ class PasswordController(
     @Error
     fun parserException(request: HttpRequest<*>, parse: UnsatisfiedRouteException): HttpResponse<PasswordValidationErrorResponse> =
         HttpResponse.serverError(PasswordValidationErrorResponse("was impossible to serialize the payload [${parse.message}]"))
-
-    @Error
-    fun unexpectedError(request: HttpRequest<*>, throwable: Throwable): HttpResponse<PasswordValidationErrorResponse> =
-        HttpResponse.serverError(PasswordValidationErrorResponse("unexpected error handling validations [${throwable.message}]"))
 }
