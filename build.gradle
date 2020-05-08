@@ -89,6 +89,12 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
+kapt {
+    arguments {
+        arg("micronaut.processing.incremental", true)
+    }
+}
+
 allOpen {
 	annotation("io.micronaut.aop.Around")
 }
