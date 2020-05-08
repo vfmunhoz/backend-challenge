@@ -9,26 +9,20 @@ import assertk.assertions.isFalse
 import assertk.assertions.isNotNull
 import assertk.assertions.isNullOrEmpty
 import assertk.assertions.isTrue
-import br.com.challenge.controllers.PasswordController
 import br.com.challenge.entities.PasswordValidationErrorResponse
 import br.com.challenge.entities.PasswordValidationRequest
 import br.com.challenge.entities.PasswordValidationResponse
 import br.com.challenge.extensions.ApplicationExtension
-import br.com.challenge.services.PasswordService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.micronaut.context.BeanContext
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
-import java.lang.RuntimeException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PasswordValidationTest {
