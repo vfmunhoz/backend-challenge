@@ -15,7 +15,7 @@ class PasswordService {
     fun validatePassword(password: String): PasswordStatus {
         val validationErrorMessages = mutableListOf<String>()
 
-        val trimPassword = password.trim().replace(" ", "")
+        val trimPassword = password.trim()
 
         val isLengthValid = validateLength(trimPassword).also { verifyValidation(it, validationErrorMessages, PASSWORD_LENGTH_ERROR_MESSAGE) }
         val isCaseValid = trimPassword.hasLowerAndUpperCaseLetters().also { verifyValidation(it, validationErrorMessages, PASSWORD_LETTER_CASE_ERROR_MESSAGE) }
