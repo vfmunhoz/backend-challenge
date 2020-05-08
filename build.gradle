@@ -2,7 +2,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.3.50"
     id "org.jetbrains.kotlin.kapt" version "1.3.50"
     id "org.jetbrains.kotlin.plugin.allopen" version "1.3.50"
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
     id "net.ltgt.apt" version "0.18"
     id "application"
 }
@@ -18,8 +18,13 @@ repositories {
 }
 
 configurations {
-    // for dependencies that are needed for development only
-    developmentOnly 
+    developmentOnly // for dependencies that are needed for development only
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+    integrationTestAnnotationProcessor.extendsFrom testAnnotationProcessor
+    kaptIntegrationTest.extendsFrom kaptTest
 }
 
 sourceSets {
@@ -31,15 +36,6 @@ sourceSets {
         }
         resources.srcDir file('src/integration-test/resources')
     }
-}
-
-configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
-    integrationTestImplementation.extendsFrom testImplementation
-    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
-    integrationTestAnnotationProcessor.extendsFrom testAnnotationProcessor
-    kaptIntegrationTest.extendsFrom kaptTest
 }
 
 dependencies {
@@ -83,6 +79,10 @@ test {
     useJUnitPlatform()
 }
 
+allOpen {
+    annotation("io.micronaut.aop.Around")
+}
+
 task integrationTest(type: Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
@@ -92,11 +92,8 @@ task integrationTest(type: Test) {
 kapt {
     arguments {
         arg("micronaut.processing.incremental", true)
+        arg("micronaut.processing.annotations", "br.com.*")
     }
-}
-
-allOpen {
-	annotation("io.micronaut.aop.Around")
 }
 
 compileKotlin {
@@ -125,8 +122,10 @@ shadowJar {
     mergeServiceFiles()
 }
 
-run.classpath += configurations.developmentOnly
-run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+tasks.withType(JavaExec) {
+    classpath += configurations.developmentOnly
+    jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+}
 
 check.dependsOn integrationTest
 integrationTest.mustRunAfter test
