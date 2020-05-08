@@ -13,6 +13,7 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Error
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Produces
+import io.micronaut.web.router.exceptions.UnsatisfiedRouteException
 
 @Controller("/")
 class PasswordController(
@@ -29,6 +30,10 @@ class PasswordController(
             if(passwordValidationResponse.isValid) HttpResponse.ok(passwordValidationResponse)
             else HttpResponse.badRequest(passwordValidationResponse)
         }
+
+    @Error
+    fun parserException(request: HttpRequest<*>, parse: UnsatisfiedRouteException): HttpResponse<PasswordValidationErrorResponse> =
+        HttpResponse.serverError(PasswordValidationErrorResponse("was impossible to serialize the payload [${parse.message}]"))
 
     @Error
     fun unexpectedError(request: HttpRequest<*>, throwable: Throwable): HttpResponse<PasswordValidationErrorResponse> =

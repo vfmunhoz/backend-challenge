@@ -1,6 +1,8 @@
 package br.com.challenge.extensions
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.http.client.DefaultHttpClient
+import io.micronaut.http.client.DefaultHttpClientConfiguration
 import io.micronaut.http.client.HttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import org.junit.jupiter.api.extension.AfterAllCallback
@@ -25,9 +27,13 @@ class ApplicationExtension: BeforeAllCallback, AfterAllCallback {
 
     fun client(): HttpClient {
         if(!this::httpClient.isInitialized) {
-            httpClient = HttpClient.create(embeddedServer.url)
+            httpClient = DefaultHttpClient(embeddedServer.url, DefaultHttpClientConfiguration().apply {
+                isExceptionOnErrorStatus = false
+            })
         }
 
         return httpClient
     }
 }
+
+
