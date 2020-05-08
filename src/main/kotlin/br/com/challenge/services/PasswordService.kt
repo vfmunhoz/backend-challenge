@@ -4,10 +4,13 @@ import br.com.challenge.entities.PasswordStatus
 import br.com.challenge.extensions.hasDigits
 import br.com.challenge.extensions.hasLowerAndUpperCaseLetters
 import br.com.challenge.extensions.hasSpecialChars
+import org.slf4j.LoggerFactory
 import javax.inject.Singleton
 
 @Singleton
 class PasswordService {
+
+    private val logger = LoggerFactory.getLogger(PasswordService::class.java)
 
     fun validatePassword(password: String): PasswordStatus {
         val validationErrorMessages = mutableListOf<String>()
@@ -18,6 +21,8 @@ class PasswordService {
         val isCaseValid = trimPassword.hasLowerAndUpperCaseLetters().also { verifyValidation(it, validationErrorMessages, PASSWORD_LETTER_CASE_ERROR_MESSAGE) }
         val hasDigits = trimPassword.hasDigits().also { verifyValidation(it, validationErrorMessages, PASSWORD_NO_DIGIT_ERROR_MESSAGE) }
         val hasSpecialChars = trimPassword.hasSpecialChars().also { verifyValidation(it, validationErrorMessages, PASSWORD_NO_SPECIAL_CHAR_ERROR_MESSAGE) }
+
+        this.logger.debug("password validation steps result: isLengthValid: [$isLengthValid], isCaseValid: [$isCaseValid], hasDigits: $hasDigits, hasSpecialChars: $hasSpecialChars")
 
         return PasswordStatus(
             isLengthValid && isCaseValid && hasDigits && hasSpecialChars,

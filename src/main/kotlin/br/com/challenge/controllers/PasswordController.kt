@@ -14,22 +14,29 @@ import io.micronaut.http.annotation.Error
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Produces
 import io.micronaut.web.router.exceptions.UnsatisfiedRouteException
+import org.slf4j.LoggerFactory
 
 @Controller("/")
 class PasswordController(
     private val passwordService: PasswordService
 ) {
 
+    private val logger = LoggerFactory.getLogger(PasswordController::class.java)
+
     @Post
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     fun validatePassword(passwordValidationRequest: PasswordValidationRequest): HttpResponse<PasswordValidationResponse> =
         passwordService.validatePassword(passwordValidationRequest.password).toPasswordResponse().let { passwordValidationResponse ->
+            logger.info("request to validate password done. password is valid? [${passwordValidationResponse.isValid}] details [${passwordValidationResponse.validationErrors}]")
+
             if(passwordValidationResponse.isValid) HttpResponse.ok(passwordValidationResponse)
             else HttpResponse.badRequest(passwordValidationResponse)
         }
 
     @Error
     fun parserException(request: HttpRequest<*>, parse: UnsatisfiedRouteException): HttpResponse<PasswordValidationErrorResponse> =
-        HttpResponse.serverError(PasswordValidationErrorResponse("was impossible to serialize the payload [${parse.message}]"))
+        HttpResponse.serverError(PasswordValidationErrorResponse("was impossible to serialize the payload [${parse.message}]")).also {
+            logger.error("error parsing password validation payload", parse)
+        }
 }
